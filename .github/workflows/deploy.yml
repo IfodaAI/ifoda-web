@@ -1,14 +1,50 @@
-- name: Deploy to Server
-  run: |
-    ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-    set -e
-    cd /home/boshadmin
+name: Deploy to Server
 
-    cd ifoda_web
-    source base/bin/activate
-    pip install --upgrade pip
-    pip install -r requirements.txt
-    python manage.py migrate
+on:
+  push:
+    branches:
+      - main
 
-    sudo systemctl restart ifoda_web.service
-    EOF
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to Server
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          set -e
+          cd /home/boshadmin
+
+          if [ ! -d "ifoda_web/.git" ]; then
+              rm -rf ifoda_web
+              git clone https://github.com/IfodaAI/ifoda_web.git
+          else
+              cd ifoda_web
+              git pull origin main
+              cd ..
+          fi
+
+          cd ifoda_web
+
+          if [ ! -d "base" ]; then
+              python3 -m venv base
+          fi
+
+          source base/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          python manage.py migrate
+
+          sudo systemctl restart ifoda_web.service
+          EOF

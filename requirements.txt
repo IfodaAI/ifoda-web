@@ -12,3 +12,4 @@ requests
 django-cors-headers
 django-filter
 google-genai
+Pillow

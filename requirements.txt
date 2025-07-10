@@ -9,3 +9,4 @@ channels_redis
 uvicorn
 boto3
 requests
+django-cors-headers

@@ -26,16 +26,16 @@ jobs:
           set -e
           cd /home/boshadmin
 
-          if [ ! -d "ifoda_web/.git" ]; then
-              rm -rf ifoda_web
-              git clone https://github.com/IfodaAI/ifoda_web.git
+          if [ ! -d "ifoda-web/.git" ]; then
+              rm -rf ifoda-web
+              git clone https://github.com/IfodaAI/ifoda-web.git
           else
-              cd ifoda_web
+              cd ifoda-web
               git pull origin main
               cd ..
           fi
 
-          cd ifoda_web
+          cd ifoda-web
 
           if [ ! -d "base" ]; then
               python3 -m venv base
@@ -46,5 +46,5 @@ jobs:
           pip install -r requirements.txt
           python manage.py migrate
 
-          sudo systemctl restart ifoda_web.service
+          sudo systemctl restart ifoda-web.service
           EOF

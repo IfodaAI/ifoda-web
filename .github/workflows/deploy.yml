@@ -22,11 +22,32 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -i ~/.ssh/id_ed25519 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          cd /home/boshadmin/ifoda-web
-          git pull origin main
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          set -e
+          cd /home/boshadmin
+
+          # Agar loyiha yo'q bo‘lsa, klon qilamiz
+          if [ ! -d "ifoda-web" ]; then
+              git clone https://github.com/IfodaAI/ifoda_web.git
+          fi
+
+          cd ifoda-web
+
+          # Agar .git mavjud bo‘lsa, yangilaymiz
+          if [ -d ".git" ]; then
+              git pull origin main
+          fi
+
+          # Python virtual muhitni tekshiramiz
+          if [ ! -d "base" ]; then
+              python3 -m venv base
+          fi
+
           source base/bin/activate
+          pip install --upgrade pip
           pip install -r requirements.txt
           python manage.py migrate
+
+          # Parolsiz sudo ishlashi kerak
           sudo systemctl restart ifoda_web.service
           EOF

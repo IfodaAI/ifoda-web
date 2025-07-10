@@ -4,16 +4,6 @@
     set -e
     cd /home/boshadmin
 
-    # Papka noto‘g‘ri bo‘lsa yoki .git yo‘q bo‘lsa, qayta clone qilamiz
-    if [ ! -d "ifoda_web/.git" ]; then
-        rm -rf ifoda_web
-        git clone https://github.com/IfodaAI/ifoda_web.git
-    else
-        cd ifoda_web
-        git pull origin main
-        cd ..
-    fi
-
     cd ifoda_web
 
     if [ ! -d "base" ]; then

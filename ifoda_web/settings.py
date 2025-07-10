@@ -101,6 +101,7 @@ DATABASES = {
         'PORT': '5432',
     }
 }
+# new commit
 
 # DATABASES = {
 #     'default': {

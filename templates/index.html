@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+            <!-- Sale & Revenue Start -->
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-6">
+                        <div class="rounded d-flex align-items-center justify-content-center p-4" style="background-color: white">
+                            <img src="{% static 'img/kasal_logo.png' %}" alt="" width="70">
+                            <div class="ms-4">
+                                <h6 class="mb-0 h1">{{ kasallik_count }}</h6>
+                                <h5 class="mb-2">Kasalliklar</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="rounded d-flex align-items-center justify-content-center p-4" style="background-color: white">
+                            <img src="{% static 'img/dori_logo.png' %}" alt="" width="70">
+                            <div class="ms-4">
+                                <h6 class="mb-0 h1">{{ dori_count }}</h6>
+                                <h5 class="mb-2">Dorilar</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-4 mt-2">
+                    <div class="col-6">
+                        <div class="rounded d-flex align-items-center justify-content-center p-4" style="background-color: white">
+                            <img src="{% static 'img/users_logo.png' %}" alt="" width="70">
+                            <div class="ms-4">
+                                <h6 class="mb-0 h1">{{ user_count }}</h6>
+                                <h5 class="mb-2">Foydalanuvchilar</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="rounded d-flex align-items-center justify-content-center p-4" style="background-color: white">
+                            <img src="{% static 'img/branch_logo.png' %}" alt="" width="70">
+                            <div class="ms-4">
+                                <h6 class="mb-0 h1">{{ order_count }}</h6>
+                                <h5 class="mb-2">Buyurtmalar</h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Sale & Revenue End -->
+
+
+
+
+
+
+{% endblock %}

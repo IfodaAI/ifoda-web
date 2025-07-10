@@ -1,0 +1,549 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+
+<div class="container-fluid mt-2 pt-2 px-4">
+    <div class="card">
+        <form method="POST">
+        {% csrf_token %}
+            <div class="row">
+                <div class="info-row">
+                    <div class="info-container">
+                        <div class="d-flex">
+                            <p>Buyurtmachi:</p>
+                            <p class="ms-2">{{ order.user.fullname }}</p>
+                        </div>
+                        <div class="d-flex">
+                            <p>Telefon nomeri:</p>
+                            <p class="ms-2">{{ order.user.phone_number }}</p>
+                        </div>
+                        <div class="d-flex">
+                            <p>Buyurtma sanasi:</p>
+                            <p class="ms-2">{{ order.order_date }}</p>
+                        </div>
+                        <div class="d-flex">
+                            <p>Manzil:</p>
+                            <p class="ms-2">{{ order.delivery_latitude }} {{ order.delivery_longitude }}</p>
+                        </div>
+                        <div class="d-flex">
+                            <p>Viloyat:</p>
+                            <p class="ms-2">{{ order.user.region }}</p>
+                        </div>
+                        <div class="d-flex">
+                            <p>Tuman:</p>
+                            <p class="ms-2">{{ order.user.district }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <div class="mt-2">
+                        <div class="card" id="chat-box" style="padding: 0px">
+                          <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Chat</h5>
+                          </div>
+                          <div class="card-body" id="cardBodyId" data-mdb-perfect-scrollbar-init style="position: relative; height: 300px;overflow-y: auto">
+                            {% for message in messages %}
+                                {% if message.type == 'IMAGE' %}
+                                    {% if message.sender == 'BOT' %}
+                                    <div class="d-flex flex-row justify-content-end pt-1">
+                                      <div>
+                                        <img src="{{ message.image_url }}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">{{ message.timestamp|date:"H:i" }}</p>
+                                      </div>
+                                  <img src="{% static 'img/mijoz.jpg' %}"
+                                    alt="avatar 1" style="width: 45px; height: 100%;">
+                                </div>
+                                    {% else %}
+                                        <div class="d-flex flex-row justify-content-start">
+                                            <img src="{% static 'img/operator.png' %}"
+                                          alt="avatar 2" style="width: 45px; height: 100%;">
+                                    <div>
+                                        <img class="ms-2" src="{{ message.image_url }}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        <p class="small me-3 mb-3 rounded-3 text-muted">{{ message.timestamp|date:"H:i" }}</p>
+                                    </div>
+                                </div>
+                                    {% endif %}
+                                {% else %}
+                                    {% if message.sender == 'BOT' %}
+                                        <div class="d-flex flex-row justify-content-end pt-1">
+                                  <div>
+                                    <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">{{ message.text }}</p>
+                                    <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">{{ message.timestamp|date:"H:i" }}</p>
+                                  </div>
+                                  <img src="{% static 'img/mijoz.jpg' %}"
+                                    alt="avatar 1" style="width: 45px; height: 100%;">
+                                </div>
+                                    {% else %}
+                                        <div class="d-flex flex-row justify-content-start">
+                                  <img src="{% static 'img/operator.png' %}"
+                                    alt="avatar 1" style="width: 45px; height: 100%;">
+                                  <div>
+                                    <p class="small ms-3 mb-1 rounded-3 bg-body-tertiary">{{ message.text }}</p>
+                                    <p class="small ms-3 mb-3 rounded-3 text-muted">{{ message.timestamp|date:"H:i" }}</p>
+                                  </div>
+                                </div>
+                                    {% endif %}
+                                {% endif %}
+                              {% endfor %}
+                          </div>
+                          <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
+                            <img src="{% static 'img/operator.png' %}"
+                              alt="avatar 3" style="width: 40px; height: 100%;">
+                            <input type="text" class="form-control form-control-lg ms-2" id="chat-input" onkeydown="checkEnter(event)"
+                              placeholder="Xabar yozing..." style="font-size: 15px">
+                              <input type="file" id="imageInput" style="display: none" accept="image/*" onchange="sendImage()">
+                              <button id="imageButton" type="button" class="btn btn-primary ms-3"><i class="fas fa-image"></i></button>
+                              <button onclick="sendMessage()" type="button" id="sendMessageBtn" class="btn btn-primary ms-3"><i class="fas fa-paper-plane"></i></button>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div style="display: flex;justify-content: space-between;align-items: center;border-bottom: 1px solid rgba(39, 76, 119, 1);color: rgba(39, 76, 119, 1);padding-bottom: 7px">
+                            <h6>Kasallik tashxisi:</h6>
+                            <button type="button" id="ai-model-button" style="padding: 7px;color: white;border-radius: 7px;background: #009CFF;border-color: white;">AI model</button>
+                        </div>
+                        <div class="checkbox-list">
+                                {% for kasallik in all_kasallik %}
+                                 <div class="row pt-2">
+                                    <div class="col-2" style="width: 50px">
+                                        <span>{{ forloop.counter }}.</span>
+                                    </div>
+                                    <div class="form-check col-9">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            id="kasallik{{ forloop.counter }}"
+                                            name="kasallik"
+                                            value="{{ kasallik.id }}"
+                                            data-diseases="{{ related_dori_data|get_related_dori_data:kasallik.id }}"
+                                            {% if kasallik.id in selected_kasallik_ids %}checked{% endif %}
+                                        >
+                                        <label class="form-check-label" for="kasallik{{ forloop.counter }}">
+                                            {{ kasallik.name }} — {{ kasallik.description }}
+                                        </label>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            <!-- Qolgan tashxislar shu yerga yoziladi -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="mt-2">
+                <h6 style="border-bottom: 1px solid rgba(39, 76, 119, 1);color: rgba(39, 76, 119, 1);padding-bottom: 7px">Kasallikni davolash uchun dorilar ro‘yxati:</h6>
+                <div class="checkbox-list2">
+                     {% for dori in all_dori %}
+                     <div class="row pt-2">
+                        <div class="col-2" style="width: 50px">
+                            <span>{{ forloop.counter }}.</span>
+                        </div>
+                        <div class="form-check col-9">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="dori{{ forloop.counter }}"
+                                name="dori"
+                                value="{{ dori.id }}"
+                                {% if dori.id in selected_dori_ids %}checked{% endif %}
+                            >
+                            <label class="form-check-label" for="dori{{ forloop.counter }}">
+                                {{ dori.name }} — {{ dori.description }}
+                            </label>
+                        </div>
+                     </div>
+                    {% endfor %}
+                    <!-- Qolgan dorilar shu yerda -->
+                </div>
+            </div>
+                </div>
+            </div>
+            <div class="row my-2">
+                <div class="col-12 d-flex justify-content-end">
+                    <a href="{% url 'order' %}" type="button" class="btn btn-outline-primary me-4">Orqaga</a>
+                    <button type="submit" class="btn btn-submit me-5">Yuborish</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered  modal-fullscreen-lg-down">
+    <div class="modal-content">
+      <div class="modal-body">
+          <img id="modalImage" class="d-block w-100" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRHcquWPzhur9q-SNhIKivz6oJlzsJxeQedQA&s" alt="">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+{% endblock %}
+
+{% block foot %}
+    <script>
+     const chatDivBody = document.getElementById('cardBodyId');
+
+    function scrollToBottom() {
+        chatDivBody.scrollTop = chatDivBody.scrollHeight;
+    }
+
+    window.onload = scrollToBottom;
+
+
+      const orderId = "{{ order.id }}";
+      const userId = "{{ request.user.id }}";
+
+      const chatSocket = new WebSocket(
+        `ws://${document.location.host}/ws/chat/${orderId}/`
+      );
+
+      chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const chatBody = document.getElementById('cardBodyId');
+        const messageDiv = document.createElement('div');
+
+        const isBot = data.sender === 'BOT';
+        const isImage = data.type === 'IMAGE';
+        const messageClass = isBot ? 'justify-content-end' : 'justify-content-start';
+
+        messageDiv.className = `d-flex flex-row ${messageClass}`;
+
+        const timestamp = new Date(data.timestamp);
+        const hours = timestamp.getHours().toString().padStart(2, '0');
+        const minutes = timestamp.getMinutes().toString().padStart(2, '0');
+        const formattedTime = `${hours}:${minutes}`;
+        if(isBot){
+            if (isImage) {
+                messageDiv.innerHTML = `
+                    <div>
+                        <img src="${data.image_url}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">${formattedTime}</p>
+                    </div>
+                    <img src="https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
+                        alt="avatar 1" style="width: 45px; height: 100%;">
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <div>
+                        <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-primary">
+                            ${data.message}
+                        </p>
+                        <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">${formattedTime}</p>
+                    </div>
+                    <img src="https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
+                        alt="avatar 1" style="width: 45px; height: 100%;">
+                `;
+            }
+        }else{
+            if (isImage) {
+                messageDiv.innerHTML = `
+                    <img src="https://cdn-icons-png.flaticon.com/512/3143/3143160.png"
+                      alt="avatar" style="width: 45px; height: 100%;">
+                    <div>
+                        <img class="ms-2" src="${data.image_url}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <p class="small ms-3 mb-3 rounded-3 text-muted">${formattedTime}</p>
+                    </div>
+                `;
+            } else {
+                messageDiv.innerHTML = `
+                    <img src="https://cdn-icons-png.flaticon.com/512/3143/3143160.png"
+                      alt="avatar" style="width: 45px; height: 100%;">
+                    <div>
+                        <p class="small ms-3 mb-1 rounded-3 bg-body-tertiary">
+                            ${data.message}
+                        </p>
+                        <p class="small ms-3 mb-3 rounded-3 text-muted">${formattedTime}</p>
+                    </div>
+                `;
+            }
+        }
+
+
+
+
+        chatBody.appendChild(messageDiv);
+        chatBody.scrollTop = chatBody.scrollHeight;
+        document.getElementById('sendMessageBtn').innerHTML = '<i class="fas fa-paper-plane"></i>';
+        document.getElementById('imageButton').innerHTML = '<i class="fas fa-image"></i>';
+      };
+
+      chatSocket.onclose = function(error) {
+        console.error('Chat socket closed unexpectedly');
+        const toastBody = document.getElementById('toastBody');
+        toastBody.innerHTML = "Websocket uzildi. Iltimos, sahifani qayta yuklang.";
+        const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+        errorToast.show();
+      };
+
+      function checkEnter(event) {
+            if (event.key === 'Enter') {  // Agar "Enter" tugmasi bosilgan bo'lsa
+                event.preventDefault();  // Enter tugmasining default xatti-harakatini to'xtatish (masalan, form yuborish)
+                sendMessage();  // Xabar yuborish funksiyasini chaqirish
+            }
+        }
+
+      function sendMessage() {
+          const messageInput = document.getElementById('chat-input');
+          const message = messageInput.value;
+          document.getElementById('sendMessageBtn').innerHTML = `<div class="spinner-border spinner-border-sm" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>`
+
+          if (message.trim() !== '') {
+            chatSocket.send(JSON.stringify({
+              'sender': "USER",
+              'message': message,
+              'timestamp': new Date().toLocaleTimeString()
+            }));
+
+            messageInput.value = '';
+          }
+    }
+
+    function sendImage() {
+        const imageInput = document.getElementById('imageInput');
+        const file = imageInput.files[0];
+        document.getElementById('imageButton').innerHTML = `<div class="spinner-border spinner-border-sm" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>`
+
+        if (file) {
+            const formData = new FormData();
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            formData.append('csrfmiddlewaretoken', csrftoken);
+            formData.append('image', file);
+
+            fetch('/upload_image/', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Image uploaded:', data);
+                chatSocket.send(JSON.stringify({
+                    'sender': "USER",
+                    'type': "IMAGE",
+                    'message': null,
+                    'image': data.image_url,
+                    'timestamp': new Date().toLocaleTimeString()
+                }));
+            })
+            .catch(error => {
+                document.getElementById('imageButton').innerHTML = '<i class="fas fa-image"></i>';
+                console.error('Error:', error);
+                const toastBody = document.getElementById('toastBody');
+                toastBody.innerHTML = "Xatolik yuz berdi! Iltimos, qayta urinib ko'ring. Xatolik: " + error
+                const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                errorToast.show();
+            });
+        }
+    }
+
+
+    function toggleChat() {
+        const chatBox = document.getElementById('chat-box');
+        const chatIcon = document.getElementById('chat-icon-icon');
+        const chatBody = document.getElementById('cardBodyId');
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+        if (chatBox.style.display === 'none' || chatBox.style.display === '') {
+            chatBox.style.display = 'flex'; // Chat oynasini ochish
+            chatIcon.classList.remove('fa-comment');
+            chatIcon.classList.add('fa-times'); // Ikonkani X ga o'zgartirish
+        } else {
+            chatBox.style.display = 'none'; // Chat oynasini yopish
+            chatIcon.classList.remove('fa-times');
+            chatIcon.classList.add('fa-comment'); // Ikonkani qayta ochish holatiga o'zgartirish
+        }
+    }
+
+    const modal = document.getElementById('exampleModal');
+    const modalImage = document.getElementById('modalImage');
+    const fileInput = document.getElementById('imageInput');
+    const buttonImage = document.getElementById('imageButton');
+
+    buttonImage.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    document.addEventListener('click', function (event) {
+        if (event.target.matches('img[data-bs-toggle="modal"]')) {
+            const modalImage = document.getElementById('modalImage');
+            modalImage.src = event.target.src;
+        }
+    });
+
+
+
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // Barcha kasallik checkboxlarini olish
+        const kasallikCheckboxes = document.querySelectorAll('input[name="kasallik"]');
+        const doriCheckboxes = document.querySelectorAll('input[name="dori"]');
+
+        kasallikCheckboxes.forEach(kasallikCheckbox => {
+            kasallikCheckbox.addEventListener("change", function () {
+                // Kasallik `data-diseases` atributidagi dori IDlarini olish
+                const diseasesData = kasallikCheckbox.getAttribute("data-diseases");
+                if (diseasesData) {
+                    const relatedDoriIds = JSON.parse(diseasesData);
+
+                    relatedDoriIds.forEach(doriId => {
+                        const relatedDoriCheckbox = document.querySelector(`input[name="dori"][value="${doriId}"]`);
+                        if (relatedDoriCheckbox) {
+                            if (kasallikCheckbox.checked) {
+                                relatedDoriCheckbox.checked = true;
+                            } else {
+                                // Agar kasallik belgisi o'chirilib tashlansa, dorini ham o'chirish
+                                relatedDoriCheckbox.checked = false;
+                            }
+                        }
+                    });
+                }
+            });
+        });
+        
+        // AI model tugmasini olish
+        const aiModelButton = document.getElementById('ai-model-button');
+        
+        if (aiModelButton) {
+            // Add click event listener to the button
+            aiModelButton.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent any default form submission
+                
+                // Get the order ID from the current page
+                const orderId = "{{ order.id }}";
+                
+                // Show loading state on the button
+                const originalButtonText = aiModelButton.innerHTML;
+                aiModelButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`;
+                aiModelButton.disabled = true;
+                
+                // Send AJAX request to the backend
+                fetch('/ai_model_prediction/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    },
+                    body: JSON.stringify({
+                        order_id: orderId
+                    })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Success:', data);
+                    
+                    // Check if pills array exists in the response
+                    if (data.pills && Array.isArray(data.pills)) {
+                        // First, uncheck all existing checkboxes
+                        const kasallikCheckboxes = document.querySelectorAll('input[name="kasallik"]');
+                        const doriCheckboxes = document.querySelectorAll('input[name="dori"]');
+                        
+                        kasallikCheckboxes.forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                        
+                        doriCheckboxes.forEach(checkbox => {
+                            checkbox.checked = false;
+                        });
+                        
+                        // Now check the checkboxes based on the returned pill IDs
+                        data.pills.forEach(pillId => {
+                            const doriCheckbox = document.querySelector(`input[name="dori"][value="${pillId}"]`);
+                            if (doriCheckbox) {
+                                doriCheckbox.checked = true;
+                            }
+                        });
+                        
+                        // Also check related diseases based on pills
+                        updateDiseaseCheckboxesBasedOnPills(data.pills);
+                    }
+                    
+                    // If diseases are also returned, check those as well
+                    if (data.diseases && Array.isArray(data.diseases)) {
+                        data.diseases.forEach(diseaseId => {
+                            const diseaseCheckbox = document.querySelector(`input[name="kasallik"][value="${diseaseId}"]`);
+                            if (diseaseCheckbox) {
+                                diseaseCheckbox.checked = true;
+                            }
+                        });
+                    }
+                    
+                    // Restore button state
+                    aiModelButton.innerHTML = originalButtonText;
+                    aiModelButton.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    
+                    // Show error message
+                    const toastBody = document.getElementById('toastBody');
+                    if (toastBody) {
+                        toastBody.innerHTML = "Xatolik yuz berdi! Iltimos, qayta urinib ko'ring.";
+                        const errorToast = new bootstrap.Toast(document.getElementById('errorToast'));
+                        errorToast.show();
+                    } else {
+                        alert("Xatolik yuz berdi! Iltimos, qayta urinib ko'ring.");
+                    }
+                    
+                    // Restore button state
+                    aiModelButton.innerHTML = originalButtonText;
+                    aiModelButton.disabled = false;
+                });
+            });
+        }
+    });
+
+    // Helper function to update disease checkboxes based on selected pills
+    function updateDiseaseCheckboxesBasedOnPills(pillIds) {
+        // Create a set of diseases that should be checked based on selected pills
+        const diseasesToCheck = new Set();
+        
+        // For each pill, find diseases that reference it
+        const kasallikCheckboxes = document.querySelectorAll('input[name="kasallik"]');
+        kasallikCheckboxes.forEach(checkbox => {
+            const diseasesData = checkbox.getAttribute("data-diseases");
+            if (diseasesData) {
+                const relatedDoriIds = JSON.parse(diseasesData);
+                
+                // If any of the pills in our list is related to this disease, mark it for checking
+                const hasMatchingPill = relatedDoriIds.some(doriId => pillIds.includes(parseInt(doriId)));
+                if (hasMatchingPill) {
+                    diseasesToCheck.add(checkbox.value);
+                }
+            }
+        });
+        
+        // Check the identified disease checkboxes
+        diseasesToCheck.forEach(diseaseId => {
+            const diseaseCheckbox = document.querySelector(`input[name="kasallik"][value="${diseaseId}"]`);
+            if (diseaseCheckbox) {
+                diseaseCheckbox.checked = true;
+            }
+        });
+    }
+    
+
+    </script>
+{% endblock %}

@@ -1,0 +1,137 @@
+{% extends 'baselogin.html' %}
+{% load static %}
+{% block style %}
+<style>
+.rounded-lg {
+  border-radius: 1rem !important;
+}
+
+.text-small {
+  font-size: 0.9rem !important;
+}
+
+.custom-separator {
+  width: 5rem;
+  height: 6px;
+  border-radius: 1rem;
+}
+
+.text-uppercase {
+  letter-spacing: 0.2em;
+}
+
+body {
+  background: #f3f6f9;
+  background: -webkit-linear-gradient(to right, #f3f6f9, #f3f6f9);
+  background: linear-gradient(to right, #f3f6f9, #f3f6f9);
+  color: #514B64;
+  min-height: 100vh;
+}
+</style>
+{% endblock %}
+
+{% block login %}
+<div class="row">
+<div class="col-xl-4">
+<nav class="navbar navbar-light position-absolute" style="background-color: #f3f6f9;">
+  <div class="container-fluid">
+    <a href="{% url 'home' %}" class="navbar-brand">
+      <p style="margin-bottom: 0px;"><img class="me-2" src="{% static 'img/logo.ico' %}" alt="Logo" style="width: 40px;padding-bottom: 14px;"><span class="h3 text-primary">MuharrirAI</span></p>
+    </a>
+  </div>
+</nav>
+</div>
+</div>
+
+<section>
+  <div class="container py-4">
+
+     <!-- Start -->
+  <header class="text-center mb-2 text-white">
+      <div class="row">
+        <div class="col-lg-7 mx-auto">
+          <h1>Premium haqida</h1>
+        </div>
+      </div>
+    </header>
+    <!-- END -->
+
+
+
+    <div class="row">
+      <!-- Pricing Table-->
+      <div class="col-lg-6 mb-5 mb-lg-0">
+        <div class="bg-white p-3 rounded-lg shadow" style="border: 5px solid rgb(255, 255, 255);height: 500px;">
+          <h1 class="h4 text-uppercase font-weight-bold mb-4 text-center pt-3">Standart</h1>
+          <h2 class="h3 font-weight-bold text-center">Bepul</h2>
+
+          <div class="custom-separator my-2 mx-auto bg-primary"></div>
+
+          <ul class="list-unstyled my-3 text-left mx-5 pt-3">
+            <li class="h5 mb-3">
+              <i class="fa fa-check mr-2 text-primary"></i> Imlo tekshiruvi </li>
+            <li class="h5 mb-3">
+              <i class="fa fa-check mr-2 text-primary"></i> Transliteratsiya </li>
+            <li class="h6 mb-3 text-muted">
+              <i class="fa fa-times mr-2"></i>
+              Parafreyzer (50 so‘zdan kop)
+            </li>
+            <li class="h6 mb-3 text-muted">
+              <i class="fa fa-times mr-2"></i>
+              Grammatik xatolarni to‘g‘rilash (50 so‘zdan kop)
+            </li>
+            <li class="h6 mb-3 text-muted">
+              <i class="fa fa-times mr-2"></i>
+              Xulosalovchi (1200 so‘zdan ko‘p)
+            </li>
+            <li class="h6 mb-3 text-muted">
+              <i class="fa fa-times mr-2"></i>
+              Nutqni matnga aylantirish (5 daqiqadan ko‘p)
+            </li>
+          </ul>
+          <div class="text-center pt-4">
+          <a href="{% url 'home' %}" class="btn btn-primary btn-block p-3 shadow rounded-pill">Standartni tanlash</a></div>
+        </div> 
+      </div>
+      <!-- END -->
+
+
+      <!-- Pricing Table-->
+      <div class="col-lg-6">
+        <div class="bg-white p-3 rounded-lg shadow" style="border: 5px solid #0fc33c;height: 500px;">
+          <h1 class="h4 text-uppercase font-weight-bold mb-4 text-center pt-3">Premium</h1>
+          <h2 class="h3 font-weight-bold text-center">90 000 so‘m<span class="text-small font-weight-normal ml-2">/ oyiga</span></h2>
+
+          <div class="custom-separator my-2 mx-auto" style="background-color: #0fc33c;"></div>
+
+          <ul class="h5 list-unstyled my-3 text-left font-weight-normal mx-5 pt-3">
+            <li class="mb-3">
+              <i class="fa fa-check mr-2 text-primary"></i>  Imlo tekshiruvi</li>
+            <li class="mb-3">
+              <i class="fa fa-check mr-2 text-primary"></i> Transliteratsiya</li>
+            <li class="mb-3">
+              <i class="fa fa-check mr-2 text-primary"></i> Parafreyzer </li>
+            <li class="mb-3">
+              <i class="fa fa-check mr-2 text-primary"></i> Grammatik xatolarni to‘g‘rilash</li>
+            <li class="mb-3">
+              <i class="fa fa-check mr-2 text-primary"></i> Xulosalovchi </li>
+            <li class="mb-3">
+              <i class="fa fa-check mr-2 text-primary"></i> Nutqni matnga aylantirish </li>
+          </ul>
+          <div class="text-center">
+          <a href="{% url 'price' %}" class="btn btn-primary btn-block p-3 shadow rounded-pill" style="background-color: #0fc33c;">Tarifni tanlash</a></div>
+        </div>
+      </div>
+      <!-- END -->
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}  
+
+
+{% block foot %}
+
+
+{% endblock %}

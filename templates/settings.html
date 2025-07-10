@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+            <!-- Chart Start -->
+            <div class="container-fluid pt-4 px-4 p-4">
+                <div class="container-fluid">
+                    <nav class="navbar rounded" style="background-color: white">
+                      <div class="container-fluid" style="padding: 5px">
+                                    <div class="d-flex col-sm-12 ms-4" style="position: relative">
+                                        <h4 class="text-dark">Narxni o'zgartish</h4>
+                                    </div>
+                      </div>
+                    </nav>
+                </div>
+                <div class="container-fluid mt-4">
+                    {% if delivery %}
+                    <table style="width: 100%;">
+                        <thead class="table-custom" style="background-color: rgba(39, 76, 119, 1);color: white;">
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th>Kilometr</th>
+                                <th>Narxi</th>
+                                <th>O'zgartirilgan vaqti</th>
+                                <th>Yaratilgan vaqti</th>
+                                <th>Harakatlar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" style="border: 2px solid #f1f1f1;">
+                            {% for item in delivery %}
+                            <tr style="background-color: white;border-collapse: collapse; border-bottom: 3px solid #f1f1f1;">
+                                <td><input type="checkbox" class="row-checkbox"></td>
+                                <td>1 km ga</td>
+                                <td>{{ item.price }} so'm</td>
+                                <td>{{ item.updated_at }}</td>
+                                <td>{{ item.created_at }}</td>
+                                <td>
+                                    <button class="btn btn-outline-primary btn-sm edit-button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#SettingsModal"
+                                        data-id="{{ item.id }}"
+                                        data-price="{{ item.price }}">
+                                        <i class="fa fa-edit me-2" aria-hidden="true"></i>O'zgartirish
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                    {% else %}
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="alert alert-warning" role="alert">
+                                    Sozlamalar mavjud emas
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Chart End -->
+
+
+
+    <!-- Modal -->
+<div class="modal fade" id="SettingsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-2">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel"></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'settings' %}">
+            {% csrf_token %}
+          <div class="mb-3">
+            <label for="recipient-price" class="col-form-label text-dark">1 km ga narx (so'mda)</label>
+            <input type="number" name="price" class="form-control" id="recipient-price" required>
+              {% if request.GET.error %}
+                <small class="form-text" style="color:red">{{ request.GET.error }}</small>
+              {% endif %}
+          </div>
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Bekor qilish</button>
+            <button type="submit" class="btn" style="background-color: rgba(39, 76, 119, 1);color: white">Saqlash</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block foot %}
+    <script>
+
+    // Edit dori modal
+    document.addEventListener('DOMContentLoaded', function () {
+    const editButtons = document.querySelectorAll('.edit-button');
+    const modal = document.getElementById('SettingsModal');
+    const modalTitle = modal.querySelector('.modal-title');
+    const priceInput = modal.querySelector('input[name="price"]');
+    const form = modal.querySelector('form');
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const price = this.getAttribute('data-price');
+
+            priceInput.value = price;
+            modalTitle.textContent = price + ' narxni tahrirlash';
+
+            form.action = `/settings/${id}/`;
+        });
+    });
+
+
+
+});
+
+
+        // Checkbox functionality
+        const selectAll = document.getElementById('select-all');
+        selectAll.addEventListener('change', () => {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+        });
+
+        const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                // If not all row checkboxes are selected, uncheck "select-all"
+                if (![...rowCheckboxes].every(cb => cb.checked)) {
+                    selectAll.checked = false;
+                } else {
+                    selectAll.checked = true;
+                }
+            });
+        });
+    </script>
+{% endblock %}

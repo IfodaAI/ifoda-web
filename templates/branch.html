@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+
+
+            <!-- Chart Start -->
+            <div class="container-fluid pt-4 px-4 p-4">
+                <div class="container-fluid">
+                    <nav class="navbar rounded" style="background-color: white">
+                      <div class="container-fluid" style="padding: 5px">
+                                 <form method="get" action="{% url 'branch' %}" enctype="multipart/form-data" id="branch_search" autocomplete="off" style="margin-right: -20px">
+                                    <div class="d-flex col-sm-12 ms-4" style="position: relative">
+                                        <i class="fa fa-search" style="position: absolute;padding: 10px"></i>
+                                        <input type="text" name="search" class="form-control" value="{{search}}" id="textdori" placeholder="Qidirish..." style="padding: 5px;padding-left: 30px;">
+                                        <button class="btn btn-outline-primary ms-2" type="submit">Qidirish</button>
+                                    </div>
+                                </form>
+                                <div>
+                                    <button class="rounded me-2" data-bs-toggle="modal" data-bs-target="#BranchModal" style="border: none;background-color: rgba(39, 76, 119, 1);color: white;padding: 5px" id="branchaddbtn">+ Qo'shish</button>
+                                </div>
+                      </div>
+                    </nav>
+                </div>
+                <div class="container-fluid mt-4">
+                    {% if branchs %}
+                    <table style="width: 100%;">
+                        <thead class="table-custom" style="background-color: rgba(39, 76, 119, 1);color: white;">
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th>Fillial nomi</th>
+                                <th>Fillial telefon nomeri</th>
+                                <th>Kordinatasi</th>
+                                <th>Yaratilgan vaqti</th>
+                                <th>Harakatlar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" style="border: 2px solid #f1f1f1;">
+                            {% for branch in branchs %}
+                            <tr style="background-color: white;border-collapse: collapse; border-bottom: 3px solid #f1f1f1;">
+                                <td><input type="checkbox" class="row-checkbox"></td>
+                                <td class="d-inline-block text-truncate" style="max-width: 150px;">{{ branch.name }}</td>
+                                <td>{{ branch.phone_number }}</td>
+                                <td class="d-inline-block text-truncate" style="max-width: 250px;">{{ branch.latitude }}, {{ branch.longitude }}</td>
+                                <td>{{ branch.created_at }}</td>
+                                <td>
+                                    <button class="btn btn-outline-primary btn-sm border-0 edit-button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#BranchModal"
+                                        data-id="{{ branch.id }}"
+                                        data-branch_id="{{ branch.branch_id }}"
+                                        data-title="{{ branch.name }}"
+                                        data-phone_number="{{ branch.phone_number }}"
+                                        data-location1="{{ branch.latitude }}"
+                                        data-location2="{{ branch.longitude }}">
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm border-0 delete-button" data-bs-toggle="modal" data-bs-target="#deleteBranchModal"
+                                        data-id="{{ branch.id }}">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                    {% pagination page page_size total search %}
+                    {% else %}
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="alert alert-warning" role="alert">
+                                    Filliallar mavjud emas
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Chart End -->
+
+
+
+    <!-- Modal -->
+<div class="modal fade" id="BranchModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-2">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Fillial qo'shish</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'branch' %}">
+            {% csrf_token %}
+          <div class="mb-3">
+            <label for="recipient-branch_id" class="col-form-label text-dark">branch_id</label>
+            <input type="text" name="branch_id" class="form-control" id="recipient-branch_id" required>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label text-dark">Fillial nomi</label>
+            <input type="text" name="title" class="form-control" id="recipient-name" required>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-phone_number" class="col-form-label text-dark">Fillial telefon nomeri</label>
+            <input type="number" name="phone_number" class="form-control" id="recipient-phone_number" required>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-location1" class="col-form-label text-dark">1-location kordinata</label>
+            <input type="text" name="location1" class="form-control" id="recipient-location1" required placeholder="41.338263">
+          </div>
+          <div class="mb-3">
+            <label for="recipient-location2" class="col-form-label text-dark">2-location kordinata</label>
+            <input type="text" name="location2" class="form-control" id="recipient-location2" required placeholder="69.286506">
+              {% if request.GET.error %}
+                <small class="form-text" style="color:red">{{ request.GET.error }}</small>
+              {% endif %}
+          </div>
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Bekor qilish</button>
+            <button type="submit" class="btn" style="background-color: rgba(39, 76, 119, 1);color: white">Saqlash</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteBranchModal" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel2">Haqiqatdan o'chirilsinmi?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="#" class="d-flex justify-content-end">
+            {% csrf_token %}
+            <button type="button" class="btn btn-outline-primary me-2" data-bs-dismiss="modal">Bekor qilish</button>
+            <button type="submit" class="btn btn-danger">O'chirish</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block foot %}
+    <script>
+
+    // Edit dori modal
+    document.addEventListener('DOMContentLoaded', function () {
+    const editButtons = document.querySelectorAll('.edit-button');
+    const modal = document.getElementById('BranchModal');
+    const modalTitle = modal.querySelector('.modal-title');
+    const branchIdInput = modal.querySelector('input[name="branch_id"]');
+    const titleInput = modal.querySelector('input[name="title"]');
+    const phone_numberInput = modal.querySelector('input[name="phone_number"]');
+    const location1Input = modal.querySelector('input[name="location1"]');
+    const location2Input = modal.querySelector('input[name="location2"]');
+    const form = modal.querySelector('form');
+
+    const addButton = document.getElementById('branchaddbtn');
+    addButton.addEventListener('click', function () {
+        branchIdInput.value = '';
+        titleInput.value = '';
+        phone_numberInput.value = '';
+        location1Input.value = '';
+        location2Input.value = '';
+        modalTitle.textContent = 'Fillial qo\'shish';
+        form.action = '{% url "branch" %}';
+    });
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const branch_id = this.getAttribute('data-branch_id');
+            const title = this.getAttribute('data-title');
+            const phone_number = this.getAttribute('data-phone_number');
+            const location1 = this.getAttribute('data-location1');
+            const location2 = this.getAttribute('data-location2');
+
+            titleInput.value = title;
+            branchIdInput.value = branch_id;
+            phone_numberInput.value = phone_number;
+            location1Input.value = location1;
+            location2Input.value = location2;
+            modalTitle.textContent = title + ' filialni tahrirlash';
+
+            form.action = `/branch/${id}/`;
+        });
+    });
+
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    const deleteModal = document.getElementById('deleteBranchModal');
+    const deleteForm = deleteModal.querySelector('form');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            deleteForm.action = `/branch/delete/${id}/`;
+
+        });
+    });
+
+});
+
+
+        // Checkbox functionality
+        const selectAll = document.getElementById('select-all');
+        selectAll.addEventListener('change', () => {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+        });
+
+        const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                // If not all row checkboxes are selected, uncheck "select-all"
+                if (![...rowCheckboxes].every(cb => cb.checked)) {
+                    selectAll.checked = false;
+                } else {
+                    selectAll.checked = true;
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+                 <!-- Chart Start -->
+            <div class="container-fluid pt-4 px-4 p-4">
+                <div class="container-fluid">
+                    <nav class="navbar rounded" style="background-color: white">
+                      <div class="container-fluid" style="padding: 5px">
+                                 <form enctype="multipart/form-data" autocomplete="off" style="margin-right: -20px">
+                                    <div class="col-sm-12 ms-4" style="position: relative">
+                                        <i class="fa fa-search" style="position: absolute;padding: 10px"></i>
+                                        <input type="text" class="form-control" value="" placeholder="Search" style="padding: 5px;padding-left: 30px;">
+                                    </div>
+                                </form>
+                      </div>
+                    </nav>
+                </div>
+                <div class="container-fluid mt-4">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="alert alert-warning" role="alert">
+                                    Tarjimalar mavjud emas
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Chart End -->
+
+{% endblock %}
+
+{% block foot %}
+    <script>
+
+
+        // Checkbox functionality
+        const selectAll = document.getElementById('select-all');
+        selectAll.addEventListener('change', () => {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+        });
+
+        const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                // If not all row checkboxes are selected, uncheck "select-all"
+                if (![...rowCheckboxes].every(cb => cb.checked)) {
+                    selectAll.checked = false;
+                } else {
+                    selectAll.checked = true;
+                }
+            });
+        });
+    </script>
+{% endblock %}

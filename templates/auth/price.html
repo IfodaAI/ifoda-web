@@ -1,0 +1,176 @@
+{% extends 'baselogin.html' %}
+{% load static %}
+
+{% block style %}
+<style>
+.rounded-lg {
+  border-radius: 1rem !important;
+}
+
+.text-small {
+  font-size: 0.9rem !important;
+}
+
+.custom-separator {
+  width: 5rem;
+  height: 6px;
+  border-radius: 1rem;
+}
+
+.text-uppercase {
+  letter-spacing: 0.2em;
+}
+
+body {
+  background: #f3f6f9;
+  background: -webkit-linear-gradient(to right, #f3f6f9, #f3f6f9);
+  background: linear-gradient(to right, #f3f6f9, #f3f6f9);
+  color: #514B64;
+  min-height: 100vh;
+}
+</style>
+{% endblock %}
+
+{% block login %}
+<div class="row">
+  <div class="col-xl-4">
+  <nav class="navbar navbar-light position-absolute" style="background-color: #f3f6f9;">
+    <div class="container-fluid">
+      <a href="{% url 'home' %}" class="navbar-brand">
+        <p style="margin-bottom: 0px;"><img class="me-2" src="{% static 'img/logo.ico' %}" alt="Logo" style="width: 40px;padding-bottom: 14px;"><span class="h3 text-primary">MuharrirAI</span></p>
+      </a>
+    </div>
+  </nav>
+  </div>
+  </div>
+<section>
+  <div class="container py-4">
+
+     <!-- Start -->
+  <header class="text-left mb-2 text-white m-5 p-4">
+      <div class="row">
+        <div class="col-lg-7">
+          <a href="{% url 'premium' %}"><button class="btn btn-outline-success" style="margin-bottom: 15px;"><i class="fa fa-arrow-left" style="font-size: 30px; margin: 5px;border-radius: 50%;"></i> </button></a><span class="h1" style="padding: 30px;">Obuna turini tanlang:</span>
+        </div>
+      </div>
+    </header>
+    <!-- END -->
+
+
+
+    <div class="row text-center">
+
+
+      <!-- Pricing Table-->
+      <div class="col-lg-4 mb-5 mb-lg-0">
+        <div class="bg-white p-5 rounded-lg shadow" style="border: 3px solid #0fc33c;">
+          <h1 class="h5 text-uppercase font-weight-bold mb-4">Oylik</h1>
+          <h2 class="h2 font-weight-bold">90 000 so‘m</h2>
+
+          <div class="custom-separator my-4 mx-auto" style="background-color: #0fc33c;"></div>
+          <h6>90 000 so‘m<span class="text-small ml-2">/ oyiga</span></h6>
+
+          <!-- <a href="#" class="btn btn-primary btn-block p-2 px-4 shadow rounded-pill mt-4"  style="background-color: #0fc33c;">Tanlash</a> -->
+          <button class="btn btn-primary btn-block p-2 px-4 shadow rounded-pill mt-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  style="background-color: #0fc33c;">Tanlash</button>
+
+          <div class="offcanvas offcanvas-size-xxl offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="background-color: #f3f6f9;">
+            <div class="offcanvas-header">
+              <h5 id="offcanvasRightLabel">To‘lov qilish:</h5>
+              <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            
+          <div class="offcanvas-body">
+            
+            <div class="card" style="border-radius: 15px;">
+              <div class="card-body p-4">
+                <form>
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="form-outline">
+                      <input type="text" id="typeText" class="form-control form-control-lg" siez="17"
+                        placeholder="1234 5678 9012 3457" minlength="19" maxlength="19" />
+                      <label class="form-label" for="typeText">Karta raqami</label>
+                    </div>
+                    <img src="https://help.payme.uz/img/payme-logo.svg" alt="visa" width="64px" style="margin-bottom: 25px;margin-left: 5px;" />
+                  </div>
+    
+                  <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-outline">
+                      <input type="text" id="typeName" class="form-control form-control-lg text-center" siez="17"
+                        placeholder="26/07" />
+                      <label class="form-label" for="typeName">Amal qilish muddati</label>
+                    </div>
+                  </div>
+    
+                  <div class="d-flex justify-content-center align-items-center pb-2">
+                    <div class="form-outline">
+                      <input type="text" id="typeExp" class="form-control form-control-lg text-center" placeholder=""
+                        size="7" id="exp" minlength="7" maxlength="7" />
+                      <label class="form-label" for="typeExp">Summa</label>
+                    </div>
+                    <button type="button" id="tolash" class="btn btn-success p-2 px-4 shadow rounded-pill" style="margin-bottom: 30px;margin-left: 25px;">To‘lash</button>
+
+                    <div class="toast-container position-fixed top-0 start-0 p-3" style="z-index: 1">
+                      <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+                      
+                          <div class="toast-body fw-bold">
+                              ❗Ushbu funksiya tez orada qo‘shiladi. &nbsp;&nbsp;&nbsp;&nbsp;
+                              <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                          </div>
+                      </div>
+                  </div>
+
+                  </div>
+                </form>
+              </div>
+            </div>  
+          </div>
+          </div>
+        </div>
+      </div>
+      <!-- END -->
+
+      
+      <!-- Pricing Table-->
+      <div class="col-lg-4 mb-5 mb-lg-0">
+        <div class="bg-white p-5 rounded-lg shadow" style="border: 3px solid #0fc33c;">
+          <h1 class="h5 text-uppercase font-weight-bold mb-4">Yarim yillik</h1>
+          <h2 class="h2 font-weight-bold">360 000 so‘m</h2>
+
+          <div class="custom-separator my-4 mx-auto" style="background-color: #0fc33c;"></div>
+          <h6>60 000 so‘m<span class="text-small ml-2">/ oyiga</span></h6>
+
+          <button class="btn btn-primary btn-block p-2 px-4 shadow rounded-pill mt-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  style="background-color: #0fc33c;">Tanlash</button>
+        </div>
+      </div>
+      <!-- END -->
+      
+      <!-- Pricing Table-->
+      <div class="col-lg-4 mb-5 mb-lg-0">
+        <div class="bg-white p-5 rounded-lg shadow" style="border: 3px solid #0fc33c;">
+          <h1 class="h5 text-uppercase font-weight-bold mb-4">Yillik</h1>
+          <h2 class="h2 font-weight-bold">480 000 so‘m</h2>
+
+          <div class="custom-separator my-4 mx-auto" style="background-color: #0fc33c;"></div>
+          <h6>40 000 so‘m<span class="text-small ml-2">/ oyiga</span></h6>
+
+          <button class="btn btn-primary btn-block p-2 px-4 shadow rounded-pill mt-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight"  style="background-color: #0fc33c;">Tanlash</button>
+        </div>
+      </div>
+      <!-- END -->
+    </div>
+  </div>
+</section>
+{% endblock %}  
+
+
+{% block foot %}
+<script>
+  $("#tolash").click(function(){
+    var toastElement = document.querySelector(".toast");
+        var toast = new bootstrap.Toast(toastElement);
+        toast.show();
+    });
+    
+</script>
+
+{% endblock %}

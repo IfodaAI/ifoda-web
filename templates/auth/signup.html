@@ -1,0 +1,53 @@
+{% extends 'baselogin.html' %}
+{% load socialaccount %}
+{% block login %}
+
+
+        <!-- Sign Up Start -->
+        <div class="container-fluid">
+            <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
+                <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+                    
+                    <div class="bg-light rounded p-4 p-sm-5 my-4 mx-3">
+                        <div class="d-flex align-items-center justify-content-center mb-3">                           </a>
+                            <h3>Registratsiya</h3>
+                        </div>
+                        <form method="post">
+                            {% csrf_token %}
+                        <div class="form-floating mb-3">
+                            <input type="email" class="form-control" name="email" id="floatingInput" placeholder="name@example.com">
+                            <small class="form-text" style="color:red">{{ user_message }}</small>
+                            <label for="floatingInput">Email</label>
+                        </div>
+                        <!-- <div class="form-floating mb-3">
+                            <input type="text" class="form-control" name="username" id="floatingText" placeholder="jhondoe">
+                            <label for="floatingText">Username</label>
+                        </div> -->
+                        <div class="form-floating mb-4">
+                            <input type="password" class="form-control" name="password1" id="floatingPassword" placeholder="Password">
+                            <label for="floatingPassword">Parol</label>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <input type="password" class="form-control" name="password2" id="floatingPassword" placeholder="Password2">
+                            <label for="floatingPassword">Parolni qayta yozing</label>
+                            <small class="form-text" style="color:red">{{ password_message }}</small>
+                        </div>
+                        <button type="submit" class="btn btn-primary py-3 w-100 mb-4">Registratsiya</button>                        
+                    </form>
+                    <a href="{% provider_login_url 'google' %}"><button type="submit" class="btn btn-outline-primary py-3 w-100 mb-4"><i class="fab fa-google me-2"></i>Google orqali kirish</button></a>
+                    <p class="text-center mb-0">Hisobingiz bormi? <a href="{% url 'login' %}">Kirish</a></p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Sign Up End -->
+
+{% endblock %}  
+
+
+{% block foot %}
+
+
+{% endblock %}
+

@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+
+
+            <!-- Chart Start -->
+            <div class="container-fluid pt-4 px-4 p-4">
+                <div class="container-fluid">
+                    <nav class="navbar rounded" style="background-color: white">
+                      <div class="container-fluid" style="padding: 5px">
+                                 <form method="get" action="{% url 'users' %}" enctype="multipart/form-data" id="user_search" autocomplete="off" style="margin-right: -20px">
+                                    <div class="d-flex col-sm-12 ms-4" style="position: relative">
+                                        <i class="fa fa-search" style="position: absolute;padding: 10px"></i>
+                                        <input type="text" name="search" class="form-control" value="{{search}}" id="textuser" placeholder="Qidirish..." style="padding: 5px;padding-left: 30px;">
+                                        <button class="btn btn-outline-primary ms-2" type="submit">Qidirish</button>
+                                    </div>
+                                </form>
+                                <div>
+                                    <button class="rounded me-2" data-bs-toggle="modal" data-bs-target="#UserModal" style="border: none;background-color: rgba(39, 76, 119, 1);color: white;padding: 5px" id="useraddbtn">+ Qo'shish</button>
+                                </div>
+                      </div>
+                    </nav>
+                </div>
+                <div class="container-fluid mt-4">
+                    {% if users %}
+                    <table style="width: 100%;">
+                        <thead class="table-custom" style="background-color: rgba(39, 76, 119, 1);color: white;">
+                            <tr>
+                                <th><input type="checkbox" id="select-all"></th>
+                                <th>Foydalanuvhci nomi</th>
+                                <th>Telefon raqam</th>
+                                <th>Parol</th>
+                                <th>Yaratilgan vaqti</th>
+                                <th>Harakatlar</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body" style="border: 2px solid #f1f1f1;">
+                            {% for user in users %}
+                            <tr style="background-color: white;border-collapse: collapse; border-bottom: 3px solid #f1f1f1;">
+                                <td><input type="checkbox" class="row-checkbox"></td>
+                                <td class="d-inline-block text-truncate" style="max-width: 150px;">{{ user.fullname }}</td>
+                                <td>{{ user.phone_number }}</td>
+                                <td class="d-inline-block text-truncate" style="max-width: 250px;">********</td>
+                                <td>{{ user.created_at }}</td>
+                                <td>
+                                    <button class="btn btn-outline-primary btn-sm border-0 edit-button"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#UserModal"
+                                        data-id="{{ user.id }}"
+                                        data-fullname="{{ user.fullname }}"
+                                        data-phone_number="{{ user.phone_number }}">
+                                        <i class="fa fa-edit" aria-hidden="true"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm border-0 delete-button" data-bs-toggle="modal" data-bs-target="#deleteDoriModal"
+                                        data-id="{{ user.id }}">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                    {% pagination page page_size total search %}
+                    {% else %}
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="alert alert-warning" role="alert">
+                                    Foydalanuvchilar mavjud emas
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Chart End -->
+
+
+
+    <!-- Modal -->
+<div class="modal fade" id="UserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-2">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Foydalanuvchi qo'shish</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="{% url 'users' %}">
+            {% csrf_token %}
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Ism Familyasi</label>
+            <input type="text" name="fullname" class="form-control" id="recipient-name">
+          </div>
+          <div class="mb-3">
+            <label for="recipient-price" class="col-form-label">Telefon nomer</label>
+            <input type="number" name="phone_number" class="form-control" id="recipient-price">
+          </div>
+          <div class="mb-3">
+            <label for="recipient-parol" class="col-form-label">Parol</label>
+            <input type="password" name="password" class="form-control" id="recipient-parol">
+          </div>
+          <div class="mb-3">
+            <label for="recipient-parol2" class="col-form-label">Parol takror</label>
+            <input type="password" name="password2" class="form-control" id="recipient-parol2">
+          </div>
+          <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Bekor qilish</button>
+            <button type="submit" class="btn" style="background-color: rgba(39, 76, 119, 1);color: white">Saqlash</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Haqiqatdan o'chirilsinmi?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form method="post" action="#" class="d-flex justify-content-end">
+            {% csrf_token %}
+            <button type="button" class="btn btn-outline-primary me-2" data-bs-dismiss="modal">Bekor qilish</button>
+            <button type="submit" class="btn btn-danger">O'chirish</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block foot %}
+    <script>
+
+    // Edit dori modal
+    document.addEventListener('DOMContentLoaded', function () {
+    const editButtons = document.querySelectorAll('.edit-button');
+    const modal = document.getElementById('UserModal');
+    const modalTitle = modal.querySelector('.modal-title');
+    const fullnameInput = modal.querySelector('input[name="fullname"]');
+    const phone_numberInput = modal.querySelector('input[name="phone_number"]');
+    const form = modal.querySelector('form');
+
+    const addButton = document.getElementById('useraddbtn');
+    addButton.addEventListener('click', function () {
+        console.log('clicked');
+        modalTitle.textContent = 'Foydalanuvchi qo\'shish';
+        form.action = '/users/';
+        fullnameInput.value = '';
+        phone_numberInput.value = '';
+        phone_numberInput.disabled = false;
+    });
+
+    editButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            const fullname = this.getAttribute('data-fullname');
+            const phone_number = this.getAttribute('data-phone_number');
+
+            fullnameInput.value = fullname;
+            phone_numberInput.value = phone_number;
+            phone_numberInput.disabled = true;
+            modalTitle.textContent = fullname + ' foydalanuvchini tahrirlash';
+
+            form.action = `/users/${id}/`;
+        });
+    });
+
+    const deleteButtons = document.querySelectorAll('.delete-button');
+    const deleteModal = document.getElementById('deleteDoriModal');
+    const deleteForm = deleteModal.querySelector('form');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const id = this.getAttribute('data-id');
+            deleteForm.action = `/dori/delete/${id}/`;
+
+        });
+    });
+
+});
+
+
+
+        // Checkbox functionality
+        const selectAll = document.getElementById('select-all');
+        selectAll.addEventListener('change', () => {
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+        });
+
+        const rowCheckboxes = document.querySelectorAll('.row-checkbox');
+        rowCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                // If not all row checkboxes are selected, uncheck "select-all"
+                if (![...rowCheckboxes].every(cb => cb.checked)) {
+                    selectAll.checked = false;
+                } else {
+                    selectAll.checked = true;
+                }
+            });
+        });
+    </script>
+{% endblock %}

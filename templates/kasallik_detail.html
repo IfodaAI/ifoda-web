@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+
+    <div class="container-fluid mt-2 pt-2 px-4">
+        <div class="card">
+            <form method="POST">
+            {% csrf_token %}
+                <div class="row">
+                    <div class="col-12">
+                        <div class="mt-2">
+                    <h6 style="border-bottom: 1px solid rgba(39, 76, 119, 1);color: rgba(39, 76, 119, 1);padding-bottom: 7px"><span style="color: #0dcaf0">{{ disease.name }}</span> kasallikga tegishli dorilar ro‘yxatini belgilash:</h6>
+                    <div class="checkbox-list2">
+                         {% for dori in all_dori %}
+                         <div class="row pt-2">
+                            <div class="col-2" style="width: 50px">
+                                <span>{{ forloop.counter }}.</span>
+                            </div>
+                            <div class="form-check col-9">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="dori{{ forloop.counter }}"
+                                    name="dori"
+                                    value="{{ dori.id }}"
+                                    {% if dori.id in related_dori_ids %}checked{% endif %}
+                                >
+                                <label class="form-check-label" for="dori{{ forloop.counter }}">
+                                    {{ dori.name }} — {{ dori.description }}
+                                </label>
+                            </div>
+                         </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                    </div>
+                </div>
+                <div class="row my-2">
+                    <div class="col-12 d-flex justify-content-end">
+                        <a href="{% url 'kasallik' %}" type="button" class="btn btn-outline-primary me-4">Orqaga</a>
+                        <button type="submit" class="btn btn-submit me-5">Saqlash</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block foot %}
+    <script>
+
+    </script>
+{% endblock %}

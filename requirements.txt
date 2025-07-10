@@ -1,0 +1,11 @@
+drf-spectacular
+Django
+djangorestframework
+python-dotenv
+channels
+channels[daphne]
+daphne
+channels_redis
+uvicorn
+boto3
+requests

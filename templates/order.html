@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+
+
+            <!-- Chart Start -->
+            <div class="container-fluid pt-4 px-4 p-4">
+                <div class="container-fluid">
+                    <nav class="navbar rounded" style="background-color: white">
+                      <div class="container-fluid" style="padding: 5px">
+                                 <form method="get" action="{% url 'order' %}" enctype="multipart/form-data" id="order_search" autocomplete="off" style="margin-right: -20px">
+                                    <div class="d-flex col-sm-12 ms-4" style="position: relative">
+                                        <i class="fa fa-search" style="position: absolute;padding: 10px"></i>
+                                        <input type="text" name="search" class="form-control" value="{{search}}" id="textorder" placeholder="Qidirish..." style="padding: 5px;padding-left: 30px;">
+                                        <button class="btn btn-outline-primary ms-2" type="submit">Qidirish</button>
+                                    </div>
+                                </form>
+                                <div>
+                                    <a href="{% url 'order' %}" class="btn rounded me-2 p-2" style="border: none;background-color: rgba(39, 76, 119, 1);color: white;padding: 5px"><i class="fa-solid fa-rotate me-2"></i> Yangilash</a>
+                                </div>
+                      </div>
+                    </nav>
+                </div>
+                <div class="container-fluid mt-4" style="overflow-x: auto; width: 100%;">
+                    {% if orders %}
+                        <table style="border-radius: 20%;width: 100%; table-layout: auto;">
+                        <thead class="table-custom" style="background-color: rgba(39, 76, 119, 1);color: white;">
+                            <tr>
+                                <th><i class="fa-solid fa-envelope"></i></th>
+                                <th>Buyurtmachi</th>
+                                <th>Status</th>
+                                <th>Fillial</th>
+                                <th>Summa</th>
+                                <th>To'lov</th>
+                                <th>Yetkazib berish</th>
+                                <th>Yaratilgan vaqti</th>
+                                <th>Holati</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            {% for order in orders %}
+                                <tr style="background-color: #f8f9fa;">
+                                    <td>
+                                        {% if order.unread_messages != 0 %}<span class="badge rounded-pill bg-primary">{{ order.unread_messages }}</span>{% endif %}
+                                    </td>
+                                    <td><a href="{% url 'order_detail' order.id %}">{{ order.user.fullname }}</a></td>
+                                    <td><span class="badge rounded-pill {% if order.status == 'PENDING' %}bg-warning text-dark{% elif order.status == 'PROCESS' %}bg-primary{% elif order.status == 'IN_PAYMENT' %}bg-info text-dark{% else %}bg-success{% endif %}">{{ order.status }}</span></td>
+                                    <td>{% if order.branch.name %}{{ order.branch.name }}{% else %}Fillial mavjud emas{% endif %}</td>
+                                    <td>{{ order.total_amount }}</td>
+                                    <td>{{ order.payment_method }}</td>
+                                    <td>{{ order.delivery_method }}</td>
+                                    <td>{{ order.order_date }}</td>
+                                    <td>
+                                        {% if order.payment_set.exists %}
+                                            <div class="d-flex">
+                                                <button class="btn btn-success btn-sm border-0">To'langan</button>
+                                                <button class="btn btn-primary btn-sm border-0 ms-2 show-products" data-order-id="{{ order.id }}" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fa-solid fa-list"></i></button>
+                                            </div>
+                                        {% else %}
+                                            <button class="btn btn-danger btn-sm border-0">To'lanmagan</button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% pagination page page_size total search %}
+                    {% else %}
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="alert alert-warning" role="alert">
+                                Buyurtmalar mavjud emas
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <!-- Chart End -->
+
+
+<!-- Product Detail Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Sotib olingan dorilar ro'yxati</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <ol type="1" id="product-list" class="list-group">
+        </ol>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Yopish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block foot %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    setInterval(function(){
+        location.reload();
+    }, 20000);
+
+  const buttons = document.querySelectorAll('.show-products');
+  const productList = document.getElementById('product-list');
+
+  buttons.forEach(button => {
+    button.addEventListener('click', function () {
+      const orderId = this.getAttribute('data-order-id');
+      fetch(`/get_order_items/${orderId}/`)
+        .then(response => response.json())
+        .then(data => {
+          productList.innerHTML = '';
+          if (data.items.length > 0) {
+            data.items.forEach(item => {
+              const li = document.createElement('li');
+              li.className = "list-group-item d-flex justify-content-between align-items-center";
+              li.innerHTML = `
+                ${item.name}
+                <span>
+                    ${item.quantity} dona - ${item.price.toLocaleString('ru-RU')} so'm
+                </span>
+              `;
+              if (item.logix_status == "ERROR") {
+                  li.classList.add('text-danger');
+                } else {
+                  li.classList.add('text-success');
+                }
+              productList.appendChild(li);
+            });
+          } else {
+            productList.innerHTML = `<li class="list-group-item">Dori topilmadi</li>`;
+          }
+        })
+        .catch(error => {
+          console.error("Xatolik:", error);
+          productList.innerHTML = `<li class="list-group-item text-danger">Xatolik yuz berdi</li>`;
+        });
+    });
+  });
+});
+</script>
+
+{% endblock %}

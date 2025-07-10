@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+{% include 'layouts/head.html' %}
+<body>
+<div class="container-fluid position-relative bg-white d-flex p-0">
+{% include 'layouts/header.html' %}
+    <div class="content {% if header == 'order' or header == 'home' or header == 'order_detail' %}content-order{% endif %}">
+        {% include 'layouts/navbar.html' %}
+{% block content %}
+
+{% endblock %}
+{% include 'layouts/footer.html' %}
+    </div>
+        <!-- Back to Top -->
+        <!-- <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a> -->
+</div>
+{% include 'layouts/foot.html' %}
+
+{% block foot %}
+
+{% endblock %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const images = document.querySelectorAll('[src^="http://94.141.76.204:8088/media/"]');
+    images.forEach(img => {
+        const path = img.src.replace('http://94.141.76.204:8088', '');
+        img.src = window.location.origin + path;
+    });
+});
+</script>
+</body>
+</html>

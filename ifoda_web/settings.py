@@ -95,7 +95,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'ifoda_web',
-        'USER': 'maqsud',
+        'USER': 'ifoda',
         'PASSWORD': '1879',
         'HOST': 'localhost',
         'PORT': '5432',

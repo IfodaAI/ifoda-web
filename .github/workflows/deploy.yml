@@ -1,53 +1,29 @@
-name: Deploy to Server
+- name: Deploy to Server
+  run: |
+    ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+    set -e
+    cd /home/boshadmin
 
-on:
-  push:
-    branches:
-      - main
+    # Papka noto‘g‘ri bo‘lsa yoki .git yo‘q bo‘lsa, qayta clone qilamiz
+    if [ ! -d "ifoda_web/.git" ]; then
+        rm -rf ifoda_web
+        git clone https://github.com/IfodaAI/ifoda_web.git
+    else
+        cd ifoda_web
+        git pull origin main
+        cd ..
+    fi
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+    cd ifoda_web
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    if [ ! -d "base" ]; then
+        python3 -m venv base
+    fi
 
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_ed25519
-          chmod 600 ~/.ssh/id_ed25519
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+    source base/bin/activate
+    pip install --upgrade pip
+    pip install -r requirements.txt
+    python manage.py migrate
 
-      - name: Deploy to Server
-        run: |
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          set -e
-          cd /home/boshadmin
-
-          # Agar loyiha yo'q bo‘lsa, klon qilamiz
-          if [ ! -d "ifoda-web" ]; then
-              git clone https://github.com/IfodaAI/ifoda_web.git
-          fi
-
-          cd ifoda-web
-
-          # Agar .git mavjud bo‘lsa, yangilaymiz
-          if [ -d ".git" ]; then
-              git pull origin main
-          fi
-
-          # Python virtual muhitni tekshiramiz
-          if [ ! -d "base" ]; then
-              python3 -m venv base
-          fi
-
-          source base/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          python manage.py migrate
-
-          # Parolsiz sudo ishlashi kerak
-          sudo systemctl restart ifoda_web.service
-          EOF
+    sudo systemctl restart ifoda_web.service
+    EOF

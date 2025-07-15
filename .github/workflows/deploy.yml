@@ -22,33 +22,29 @@ jobs:
 
       - name: Deploy to Server
         run: |
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<EOF
-            set -e
+          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+          set -e
+          cd /home/boshadmin
 
-            cd /home/boshadmin
+          if [ ! -d "ifoda-web/.git" ]; then
+              rm -rf ifoda-web
+              git clone https://github.com/IfodaAI/ifoda-web.git
+          else
+              cd ifoda-web
+              git pull origin main
+              cd ..
+          fi
 
-            if [ ! -d "ifoda-web/.git" ]; then
-                rm -rf ifoda-web
-                git clone https://github.com/IfodaAI/ifoda-web.git
-            else
-                cd ifoda-web
-                git pull origin main
-                cd ..
-            fi
+          cd ifoda-web
 
-            cd ifoda-web
+          if [ ! -d "base" ]; then
+              python3 -m venv base
+          fi
 
-            if [ ! -d "base" ]; then
-                python3 -m venv base
-            fi
+          source base/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          python manage.py migrate
 
-            source base/bin/activate
-            pip install --upgrade pip
-            pip install -r requirements.txt
-
-            python manage.py makemigrations --noinput
-            python manage.py migrate --noinput
-
-            # restart qilish uchun parol so'ramaydigan user yoki xizmat kerak
-            echo "${{ secrets.SUDO_PASSWORD }}" | sudo -S systemctl restart ifoda-web.service
-EOF
+          sudo systemctl restart ifoda-web.service
+          EOF

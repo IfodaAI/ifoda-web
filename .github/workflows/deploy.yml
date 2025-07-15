@@ -46,5 +46,5 @@ jobs:
           pip install -r requirements.txt
           python manage.py migrate
 
-          sudo systemctl restart ifoda-web.service
+          systemctl restart ifoda-web.service
           EOF

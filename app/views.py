@@ -13,7 +13,7 @@ from .serializers import PillsSerializer, BranchSerializer, DiseasesSerializer, 
     OrderToDiseasesSerializer, UserLoginSerializer, UserSignupSerializer, UserMeSerializer, ImageSerializer, \
     TelegramUserSerializer, LanguageSerializer, PaymentSerializer, OrderItemsSerializer, DeliveryCostSerializer, \
     MessageSerializer, ClickPrepareRequestSerializer, ClickCompleteRequestSerializer, PaymeLinkSerializer,UserSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.authentication import TokenAuthentication
@@ -439,6 +439,7 @@ class PillsViewSet(ConditionalPaginationMixin, ModelViewSet):
     queryset = Pills.objects.order_by("-created_at")
     serializer_class = PillsSerializer
     filterset_fields = { 'name': ['icontains'] }
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class BranchViewSet(ConditionalPaginationMixin, ModelViewSet):
     queryset = Branch.objects.order_by("-created_at")

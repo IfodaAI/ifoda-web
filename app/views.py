@@ -455,7 +455,21 @@ class OrderViewSet(ConditionalPaginationMixin, ModelViewSet):
     queryset = Order.objects.all().order_by('-order_updated_date')
     serializer_class = OrderSerializer
     filterset_fields = { 'user__fullname': ['icontains'] }
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
+    @action(detail=False, methods=['get'])
+    def my_orders(self, request):
+        user_id=request.GET.get("user_id")
+        user=TelegramUser.objects.get(telegram_id=user_id)
+        queryset=self.filter_queryset(self.get_queryset()).filter(user=user)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
 class ImageViewSet(ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer

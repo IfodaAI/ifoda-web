@@ -123,3 +123,4 @@ class NotificationConsumer(AsyncWebsocketConsumer):
     async def notify(self, event):
         newChat = event.get("newChat", True)
         await self.send(text_data=json.dumps({"newChat": newChat}))
+

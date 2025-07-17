@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import TelegramUser,Branch,Pills,Payment,Order
+from .models import TelegramUser,Branch,Pills,Payment,Order,Messages
 # Test commit
 admin.site.register(TelegramUser)
 admin.site.register(Branch)
 admin.site.register(Pills)
 admin.site.register(Payment)
 admin.site.register(Order)
+admin.site.register(Messages)

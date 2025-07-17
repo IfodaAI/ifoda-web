@@ -121,6 +121,7 @@ class Messages(models.Model):
     status = models.CharField(max_length=50, choices=[('READ', 'read'), ('UNREAD', 'unread')], default='UNREAD')
     text = models.TextField(null=True, blank=True)
     image_url = models.URLField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -130,6 +131,7 @@ class Image(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     url = models.URLField()
     order = models.ForeignKey(Order, related_name="images", on_delete=models.CASCADE, null=True, blank=True)
+    image = models.ImageField(null=True, blank=True)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

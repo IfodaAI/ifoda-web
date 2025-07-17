@@ -474,7 +474,6 @@ class ImageViewSet(ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
 
-
 class DeliveryCostViewSet(ModelViewSet):
     queryset = DeliveryCost.objects.all()
     serializer_class = DeliveryCostSerializer

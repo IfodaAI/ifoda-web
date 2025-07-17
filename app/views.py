@@ -530,6 +530,7 @@ class UsersViewSet(ConditionalPaginationMixin, ModelViewSet):
 class TelegramUserViewSet(ModelViewSet):
     queryset = TelegramUser.objects.all()
     serializer_class = TelegramUserSerializer
+    permission_classes = (AllowAny,)
 
     @action(detail=False, methods=['get'], url_path='get-telegram-id/(?P<telegram_id>[^/.]+)')
     def get_by_telegram_id(self, request, telegram_id=None):

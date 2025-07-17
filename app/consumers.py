@@ -5,6 +5,9 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import requests
 from dotenv import load_dotenv
 import os
+from .models import Messages, Order
+from django.utils.timezone import localtime
+from django.core.serializers.json import DjangoJSONEncoder
 
 @database_sync_to_async
 def get_telegram_id(order_id):
@@ -42,7 +45,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message_type = data.get('type', 'TEXT')
         image_url = data.get('image', None)
 
-        from .models import Messages, Order
 
         # Ma'lumotlarni bazaga saqlash
         order = await sync_to_async(Order.objects.get)(id=self.order_id)
@@ -124,3 +126,61 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         newChat = event.get("newChat", True)
         await self.send(text_data=json.dumps({"newChat": newChat}))
 
+class NewChatConsumer(AsyncWebsocketConsumer):
+    async def connect(self):
+        self.order_id = self.scope['url_route']['kwargs']['order_id']
+        self.room_group_name = f'chat_{self.order_id}'
+
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
+        await self.accept()
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(
+            self.room_group_name,
+            self.channel_name
+        )
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        message_type = data.get('type', 'TEXT')
+        sender = data.get('sender')
+        text = data.get('text', '')
+
+        message = await self.save_message(
+            order_id=self.order_id,
+            message_type=message_type,
+            sender=sender,
+            text=text
+        )
+
+        await self.channel_layer.group_send(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': {
+                    'id': str(message.id),
+                    'type': message.type,
+                    'sender': message.sender,
+                    'status': message.status,
+                    'text': message.text,
+                    'image_url': message.image_url,
+                    'timestamp': localtime(message.timestamp).isoformat()
+                }
+            }
+        )
+
+    async def chat_message(self, event):
+        await self.send(text_data=json.dumps(event['message'], cls=DjangoJSONEncoder))
+
+    @database_sync_to_async
+    def save_message(self, order_id, message_type, sender, text=''):
+        order = Order.objects.get(id=order_id)
+        return Messages.objects.create(
+            order=order,
+            type=message_type,
+            sender=sender,
+            text=text
+        )

@@ -35,6 +35,17 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Messages
         fields = '__all__'
+        read_only_fields = ['id', 'timestamp']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.image:
+            request = self.context.get('request')
+            if request:
+                data['image_url'] = request.build_absolute_uri(instance.image.url)
+            else:
+                data['image_url'] = instance.image.url
+        return data
 
 
 class TelegramUserSerializer(serializers.ModelSerializer):

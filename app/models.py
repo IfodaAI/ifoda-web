@@ -135,7 +135,6 @@ class Image(models.Model):
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
 class Pills(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     product_id = models.CharField(max_length=255, null=True, blank=True, default='1')

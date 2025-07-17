@@ -455,7 +455,7 @@ class OrderViewSet(ConditionalPaginationMixin, ModelViewSet):
     queryset = Order.objects.all().order_by('-order_updated_date')
     serializer_class = OrderSerializer
     filterset_fields = { 'user__fullname': ['icontains'] }
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
 
     @action(detail=False, methods=['get'])
     def my_orders(self, request):

@@ -5,7 +5,6 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import requests
 from dotenv import load_dotenv
 import os
-from .models import Messages, Order
 from django.utils.timezone import localtime
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -39,6 +38,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         )
 
     async def receive(self, text_data=None, bytes_data=None):
+        from .models import Messages, Order
         data = json.loads(text_data)
         message = data.get('message', None)
         sender = data.get('sender', 'USER')
@@ -177,6 +177,7 @@ class NewChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def save_message(self, order_id, message_type, sender, text=''):
+        from .models import Messages, Order
         order = Order.objects.get(id=order_id)
         return Messages.objects.create(
             order=order,

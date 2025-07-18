@@ -105,6 +105,7 @@ class Order(models.Model):
     order_updated_date = models.DateTimeField(auto_now=True)
     total_amount = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
     status = models.CharField(max_length=50, choices=STATUS_CHOICE, default='PENDING')
+    is_chat=models.BooleanField(default=False)
     delivery_method = models.CharField(max_length=50, choices=DELIVERY_CHOICE, default='DELIVERY')
     payment_method = models.CharField(max_length=50, choices=PAYMENT_CHOICE, default='CASH')
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)

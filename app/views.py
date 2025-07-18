@@ -454,7 +454,7 @@ class DiseasesViewSet(ConditionalPaginationMixin, ModelViewSet):
 class OrderViewSet(ConditionalPaginationMixin, ModelViewSet):
     queryset = Order.objects.all().order_by('-order_updated_date')
     serializer_class = OrderSerializer
-    filterset_fields = { 'user__fullname': ['icontains'] }
+    filterset_fields = { 'user__fullname': ['icontains'],'is_chat': ['exact'],}
     permission_classes = [AllowAny]
 
     @action(detail=False, methods=['get'])

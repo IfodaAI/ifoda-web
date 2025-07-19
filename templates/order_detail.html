@@ -207,7 +207,7 @@
       const userId = "{{ request.user.id }}";
 
       const chatSocket = new WebSocket(
-        `ws://${document.location.host}/ws/chat/${orderId}/`
+        `wss://${document.location.host}/ws/chat/${orderId}/`
       );
 
       chatSocket.onmessage = function(e) {

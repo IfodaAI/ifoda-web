@@ -305,7 +305,7 @@
           if (message.trim() !== '') {
             chatSocket.send(JSON.stringify({
               'sender': "USER",
-              'message': message,
+              'text': message,
               'timestamp': new Date().toLocaleTimeString()
             }));
 

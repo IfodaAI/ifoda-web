@@ -422,6 +422,17 @@ class MessageViewSet(ModelViewSet):
             channel_layer = get_channel_layer()
             print('message', message)
             order_id = message.order.id
+            # async_to_sync(channel_layer.group_send)(
+            #     f'chat_{order_id}',
+            #     {
+            #         "type": "chat_message",
+            #         "text": message.text if message.text else "",
+            #         "message_type": message.type,
+            #         "sender": message.sender,
+            #         "image_url": message.image_url if message.image_url else "",
+            #         "timestamp": str(message.timestamp),
+            #     },
+            # )
             async_to_sync(channel_layer.group_send)(
                 f'chat_{order_id}',
                 {

@@ -404,6 +404,7 @@ class MessageViewSet(ModelViewSet):
     # queryset = Messages.objects.all()
     serializer_class = MessageSerializer
     filterset_fields=["order"]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         qs = Messages.objects.all()

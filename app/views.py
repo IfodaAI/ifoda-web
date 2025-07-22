@@ -443,7 +443,7 @@ class MessageViewSet(ModelViewSet):
                         "sender": message.sender,
                         "status": message.status,
                         "text": message.text if message.text else "",
-                        "image_url": request.build_absolute_uri(message.image.url) if message.image else "",
+                        "image": request.build_absolute_uri(message.image.url) if message.image else "",
                         "timestamp": str(message.timestamp),
                     }
                 },

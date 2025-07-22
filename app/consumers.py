@@ -166,7 +166,7 @@ class NewChatConsumer(AsyncWebsocketConsumer):
                     'sender': message.sender,
                     'status': message.status,
                     'text': message.text,
-                    'image_url': message.image_url,
+                    'image': message.image,
                     'timestamp': localtime(message.timestamp).isoformat()
                 }
             }

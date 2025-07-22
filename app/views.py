@@ -437,11 +437,15 @@ class MessageViewSet(ModelViewSet):
                 f'chat_{order_id}',
                 {
                     "type": "chat_message",
-                    "text": message.text if message.text else "",
-                    "message_type": message.type,
-                    "sender": message.sender,
-                    "image_url": message.image_url if message.image_url else "",
-                    "timestamp": str(message.timestamp),
+                    "message": {
+                        "id": str(message.id),
+                        "type": message.type,
+                        "sender": message.sender,
+                        "status": message.status,
+                        "text": message.text if message.text else "",
+                        "image_url": message.image_url if message.image_url else "",
+                        "timestamp": str(message.timestamp),
+                    }
                 },
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)

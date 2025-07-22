@@ -50,7 +50,7 @@
                                     {% if message.sender == 'BOT' %}
                                     <div class="d-flex flex-row justify-content-end pt-1">
                                       <div>
-                                        <img src="{{ message.image }}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        <img src="{{ message.image.url }}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                         <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">{{ message.timestamp|date:"H:i" }}</p>
                                       </div>
                                   <img src="{% static 'img/mijoz.jpg' %}"
@@ -61,7 +61,7 @@
                                             <img src="{% static 'img/operator.png' %}"
                                           alt="avatar 2" style="width: 45px; height: 100%;">
                                     <div>
-                                        <img class="ms-2" src="{{ message.image }}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        <img class="ms-2" src="{{ message.image.url }}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
                                         <p class="small me-3 mb-3 rounded-3 text-muted">{{ message.timestamp|date:"H:i" }}</p>
                                     </div>
                                 </div>
@@ -229,7 +229,7 @@
             if (isImage) {
                 messageDiv.innerHTML = `
                     <div>
-                        <img src="${data.image}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <img src="${data.image.url}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <p class="small me-3 mb-3 rounded-3 text-muted d-flex justify-content-end">${formattedTime}</p>
                     </div>
                     <img src="https://media.istockphoto.com/id/1300845620/vector/user-icon-flat-isolated-on-white-background-user-symbol-vector-illustration.jpg?s=612x612&w=0&k=20&c=yBeyba0hUkh14_jgv1OKqIH0CCSWU_4ckRkAoy2p73o="
@@ -253,7 +253,7 @@
                     <img src="https://cdn-icons-png.flaticon.com/512/3143/3143160.png"
                       alt="avatar" style="width: 45px; height: 100%;">
                     <div>
-                        <img class="ms-2" src="${data.image}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                        <img class="ms-2" src="${data.image.url}" alt="image" style="width: 100px; height: 100px;cursor: pointer;object-fit: cover;" data-bs-toggle="modal" data-bs-target="#exampleModal">
                         <p class="small ms-3 mb-3 rounded-3 text-muted">${formattedTime}</p>
                     </div>
                 `;
@@ -337,7 +337,7 @@
                     'sender': "USER",
                     'type': "IMAGE",
                     'message': null,
-                    'image': data.image,
+                    'image': data.image.url,
                     'timestamp': new Date().toLocaleTimeString()
                 }));
             })

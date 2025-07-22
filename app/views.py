@@ -425,7 +425,7 @@ class MessageViewSet(ModelViewSet):
                 f'chat_{order_id}',
                 {
                     "type": "chat_message",
-                    "message": message.text if message.text else "",
+                    "text": message.text if message.text else "",
                     "message_type": message.type,
                     "sender": message.sender,
                     "image_url": message.image_url if message.image_url else "",

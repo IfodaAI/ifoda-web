@@ -273,7 +273,7 @@ class ClickCompleteAPIView(APIView):
                     load_dotenv()
                     bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
                     chat_id = order.user.telegram_id
-                    language = order.user.language.name
+                    language = 'uz'
                     if language == 'uz':
                         text = """To'lov muvaffaqiyatli amalga oshildi ✅
 Buyurtma 24 soat ichida yetkazib beriladi.
@@ -815,7 +815,7 @@ def order_detail(request, id):
         load_dotenv()
         bot_token = os.getenv('TELEGRAM_BOT_TOKEN')
         chat_id = order.user.telegram_id
-        language = order.user.language.name
+        language = 'uz'
         if language == 'uz':
             text = 'Javoblarni kurish uchun status tugmasini bosing'
         elif language == 'ru':

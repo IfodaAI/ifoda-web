@@ -792,7 +792,7 @@ def order_detail(request, id):
             for kasallik_id in selected_kasallik_ids
         ]
         OrderToDiseases.objects.bulk_create(kasallik_objects)
-        message_text="Kasalliklar:"
+        message_text="Kasalliklar:\n"
         for diseases_id in selected_kasallik_ids:
             message_text+=f"{Diseases.objects.get(id=diseases_id).name}\n"
         message=Messages.objects.create(order=order,sender="USER",text=message_text)

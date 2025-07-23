@@ -122,6 +122,7 @@ class OrderSerializer(serializers.ModelSerializer):
         return data
 
 class OrderToPillsSerializer(serializers.ModelSerializer):
+    pills=PillsSerializer()
     class Meta:
         model = OrderToPills
         fields = '__all__'

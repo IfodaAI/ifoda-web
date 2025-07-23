@@ -499,6 +499,7 @@ class DeliveryCostViewSet(ModelViewSet):
 class OrderToPillsViewSet(ModelViewSet):
     queryset = OrderToPills.objects.all()
     serializer_class = OrderToPillsSerializer
+    permission_classes = (AllowAny,)
 
     @action(detail=False, methods=['get'], url_path='get-order-id/(?P<order_id>[^/.]+)')
     def get_by_order_id(self, request, order_id=None):
@@ -791,6 +792,25 @@ def order_detail(request, id):
             for kasallik_id in selected_kasallik_ids
         ]
         OrderToDiseases.objects.bulk_create(kasallik_objects)
+        message_text="Kasalliklar:"
+        for diseases_id in selected_kasallik_ids:
+            message_text+=f"{Diseases.objects.get(id=diseases_id).name}\n"
+        message=Messages.objects.create(order=order,sender="USER",text=message_text)
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'chat_{order.id}',
+            {
+                "type": "chat_message",
+                "message": {
+                    "id": str(message.id),
+                    "type": message.type,
+                    "sender": message.sender,
+                    "status": message.status,
+                    "text": message.text if message.text else "",
+                    "timestamp": str(message.timestamp),
+                }
+            },
+        )
 
         load_dotenv()
         bot_token = os.getenv('TELEGRAM_BOT_TOKEN')

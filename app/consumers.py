@@ -154,7 +154,7 @@ class NewChatConsumer(AsyncWebsocketConsumer):
             message_type=message_type,
             sender=sender,
             text=text
-        )
+        )#TODO
 
         await self.channel_layer.group_send(
             self.room_group_name,

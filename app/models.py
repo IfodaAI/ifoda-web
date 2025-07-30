@@ -203,6 +203,9 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_status = models.CharField(max_length=50, choices=STATUS_CHOICE, null=True)
 
+    def __str__(self):
+        return f"{self.order.id}:{self.payment_status}"
+
 
 class DeliveryCost(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

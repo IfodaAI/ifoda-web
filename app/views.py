@@ -1451,5 +1451,16 @@ class CreateOrderAPIView(APIView):
         serializer = CreateOrderSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             order = serializer.save()
+            if order.payment_method == 'PAYME':
+                pay_link_generator = GeneratePayLink(order_id=order.id, amount=order.total_amount)
+                payment_link = pay_link_generator.generate_link(return_url=os.getenv("PAYME_CALL_BACK_URL"))
+            elif order.payment_method == 'CLICK':
+                payment_link = generate_click_link(order)
+
+            return Response({
+                "message": "Order created successfully",
+                "order_id": order.id,
+                "payment_link": payment_link
+            }, status=status.HTTP_201_CREATED)
             return Response({"message": "Order created successfully", "order_id": order.id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

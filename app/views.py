@@ -463,6 +463,7 @@ class BranchViewSet(ConditionalPaginationMixin, ModelViewSet):
     queryset = Branch.objects.order_by("-created_at")
     serializer_class = BranchSerializer
     filterset_fields = { 'name': ['icontains'] }
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class DiseasesViewSet(ConditionalPaginationMixin, ModelViewSet):
     queryset = Diseases.objects.order_by("-created_at")

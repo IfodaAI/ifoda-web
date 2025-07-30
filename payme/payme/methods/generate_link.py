@@ -24,6 +24,7 @@ class GeneratePayLink:
             payme_account=os.getenv("PAYME_ACCOUNT"),
             order_id=self.order_id,
             amount=float(self.amount)*100,
+            return_url=return_url
         )
         encode_params = base64.b64encode(params.encode("utf-8"))
         print('link_params: ',params)

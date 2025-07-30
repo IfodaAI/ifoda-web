@@ -219,12 +219,13 @@ class OrderItemCreateSerializer(serializers.ModelSerializer):
         fields = ['pills', 'quantity', 'price']
 
 class CreateOrderSerializer(serializers.ModelSerializer):
-    items = OrderItemCreateSerializer(many=True)  # nested field
-    payment_method = serializers.ChoiceField(choices=['PAYME', 'CLICK'])
+    items = OrderItemCreateSerializer(many=True)
+    telegram_user_id = serializers.UUIDField(write_only=True)
 
     class Meta:
         model = Order
         fields = [
+            'telegram_user_id',
             'total_amount', 'status', 'is_chat',
             'delivery_method', 'payment_method',
             'branch', 'delivery_latitude', 'delivery_longitude',
@@ -238,8 +239,14 @@ class CreateOrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         items_data = validated_data.pop('items')
-        request = self.context.get('request')
-        order = Order.objects.create(user=request.user, **validated_data)
+        telegram_user_id = validated_data.pop('telegram_user_id')
+
+        try:
+            telegram_user = TelegramUser.objects.get(id=telegram_user_id)
+        except TelegramUser.DoesNotExist:
+            raise serializers.ValidationError("Telegram foydalanuvchisi topilmadi.")
+
+        order = Order.objects.create(user=telegram_user, **validated_data)
         for item_data in items_data:
             OrderItems.objects.create(order=order, **item_data)
         return order

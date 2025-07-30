@@ -1446,6 +1446,7 @@ class StatisticsAPIView(APIView):
 
 class CreateOrderAPIView(APIView):
     permission_classes = [AllowAny]
+    load_dotenv()
 
     def post(self, request):
         serializer = CreateOrderSerializer(data=request.data, context={'request': request})

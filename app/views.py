@@ -12,7 +12,8 @@ from .models import Pills, Branch, Diseases, Order, OrderToPills, OrderToDisease
 from .serializers import PillsSerializer, BranchSerializer, DiseasesSerializer, OrderSerializer, OrderToPillsSerializer, \
     OrderToDiseasesSerializer, UserLoginSerializer, UserSignupSerializer, UserMeSerializer, ImageSerializer, \
     TelegramUserSerializer, LanguageSerializer, PaymentSerializer, OrderItemsSerializer, DeliveryCostSerializer, \
-    MessageSerializer, ClickPrepareRequestSerializer, ClickCompleteRequestSerializer, PaymeLinkSerializer,UserSerializer
+    MessageSerializer, ClickPrepareRequestSerializer, ClickCompleteRequestSerializer, PaymeLinkSerializer,UserSerializer,\
+    CreateOrderSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
@@ -115,6 +116,7 @@ def ai_model_prediction(request):
     return JsonResponse({'success': False, 'error': 'Invalid request method'}, status=400)
 
 class GeneratePayLinkAPIView(APIView):
+    load_dotenv()
 
     def post(self, request, *args, **kwargs):
         serializer = PaymeLinkSerializer(data=request.data)
@@ -124,7 +126,7 @@ class GeneratePayLinkAPIView(APIView):
 
             try:
                 pay_link_generator = GeneratePayLink(order_id=order_id, amount=amount)
-                pay_link = pay_link_generator.generate_link()
+                pay_link = pay_link_generator.generate_link(return_url=os.getenv("PAYME_CALL_BACK_URL"))
 
                 return Response({"payme_link": pay_link}, status=status.HTTP_200_OK)
             except Exception as e:
@@ -450,7 +452,6 @@ class MessageViewSet(ModelViewSet):
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class PillsViewSet(ConditionalPaginationMixin, ModelViewSet):
     queryset = Pills.objects.order_by("-created_at")
@@ -1440,3 +1441,14 @@ class StatisticsAPIView(APIView):
         }
 
         return JsonResponse(data, status=200)
+
+
+class CreateOrderAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = CreateOrderSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            order = serializer.save()
+            return Response({"message": "Order created successfully", "order_id": order.id}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

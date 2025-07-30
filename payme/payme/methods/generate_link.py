@@ -14,10 +14,10 @@ class GeneratePayLink:
     order_id: str
     amount: Decimal
 
-    def generate_link(self) -> str:
+    def generate_link(self,return_url) -> str:
 
         generated_pay_link: str = "{payme_url}/{encode_params}"
-        params: str = 'm={payme_id};ac.{payme_account}={order_id};a={amount}'
+        params: str = 'm={payme_id};ac.{payme_account}={order_id};a={amount};c={return_url}'
 
         params = params.format(
             payme_id=os.getenv("PAYME_ID"),

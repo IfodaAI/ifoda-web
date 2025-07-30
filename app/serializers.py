@@ -106,6 +106,7 @@ class ImageSerializer(serializers.ModelSerializer):
 #         model = Order
 #         fields = '__all__'
 class OrderSerializer(serializers.ModelSerializer):
+    orderitems_set = OrderItemsSerializer(many=True, read_only=True)
     class Meta:
         model = Order
         fields = "__all__"
@@ -211,3 +212,34 @@ class UserMeSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'fullname', 'phone_number']
+
+class OrderItemCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderItems
+        fields = ['pills', 'quantity', 'price']
+
+class CreateOrderSerializer(serializers.ModelSerializer):
+    items = OrderItemCreateSerializer(many=True)  # nested field
+    payment_method = serializers.ChoiceField(choices=['PAYME', 'CLICK'])
+
+    class Meta:
+        model = Order
+        fields = [
+            'total_amount', 'status', 'is_chat',
+            'delivery_method', 'payment_method',
+            'branch', 'delivery_latitude', 'delivery_longitude',
+            'delivery_price', 'items'
+        ]
+
+    def validate_items(self, value):
+        if not value:
+            raise serializers.ValidationError("At least one item is required.")
+        return value
+
+    def create(self, validated_data):
+        items_data = validated_data.pop('items')
+        request = self.context.get('request')
+        order = Order.objects.create(user=request.user, **validated_data)
+        for item_data in items_data:
+            OrderItems.objects.create(order=order, **item_data)
+        return order

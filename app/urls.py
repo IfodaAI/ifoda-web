@@ -43,5 +43,5 @@ urlpatterns = [
     path('api/click-prepare/', ClickPrepareAPIView.as_view(), name='click-prepare'),
     path('api/click-complete/', ClickCompleteAPIView.as_view(), name='click-complete'),
     path('generate-payme-link/', GeneratePayLinkAPIView.as_view(), name='generate-pay-link'),
-
+    path('api/v1/create-order/', CreateOrderAPIView.as_view(), name='create-order'),
 ]

@@ -113,7 +113,6 @@ class Order(models.Model):
     delivery_longitude = models.DecimalField(max_digits=9, decimal_places=6, default=0.00)
     delivery_price = models.DecimalField(max_digits=20, decimal_places=2, default=0.00, null=True, blank=True)
 
-
 class Messages(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='messages')

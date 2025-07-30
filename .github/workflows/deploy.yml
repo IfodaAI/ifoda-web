@@ -47,5 +47,5 @@ jobs:
           python manage.py makemigrations
           python manage.py migrate
 
-          systemctl restart ifoda_web.service
+          sudo /bin/systemctl restart ifoda_web.service
           EOF

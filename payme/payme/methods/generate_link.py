@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 from django.conf import settings
 from dotenv import load_dotenv
-load_dotenv()
 import os
 
 
@@ -15,7 +14,7 @@ class GeneratePayLink:
     amount: Decimal
 
     def generate_link(self,return_url) -> str:
-
+        load_dotenv()
         generated_pay_link: str = "{payme_url}/{encode_params}"
         params: str = 'm={payme_id};ac.{payme_account}={order_id};a={amount};c={return_url}'
 

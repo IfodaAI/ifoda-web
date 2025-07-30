@@ -47,5 +47,5 @@ jobs:
           python manage.py makemigrations
           python manage.py migrate
 
-          echo "$SUDO_PASSWORD" | sudo -S systemctl restart ifoda_web.service
+          systemctl restart ifoda_web.service
           EOF

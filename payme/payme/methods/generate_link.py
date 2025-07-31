@@ -16,7 +16,7 @@ class GeneratePayLink:
     def generate_link(self,return_url) -> str:
         load_dotenv()
         generated_pay_link: str = "{payme_url}/{encode_params}"
-        params: str = 'm={payme_id};ac.{payme_account}={order_id};a={amount};c={return_url}'
+        params: str = 'm={payme_id};ac.{payme_account}={order_id};a={amount}'#;c={return_url}
 
         params = params.format(
             payme_id=os.getenv("PAYME_ID"),
